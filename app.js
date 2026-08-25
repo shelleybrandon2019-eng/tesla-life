@@ -38,6 +38,7 @@
     document.querySelector("#progressPercent").textContent = percent + "%";
     document.querySelector("#progressLabel").textContent = done + " of " + tasks.length + " complete";
     document.querySelector("#progressBar").style.width = percent + "%";
+    if (document.querySelector("#dashProgress")) updateDashboard();
   }
 
   const fields = [...document.querySelectorAll("[data-save]")];
@@ -59,6 +60,7 @@
     document.querySelector("#milesUsed").textContent = validOdometer ? formatNumber(current - start) : "—";
     document.querySelector("#milesRemaining").textContent = validAllowance && validOdometer ? formatNumber(Math.max(0, allowance - (current - start))) : "—";
     document.querySelector("#monthlyTarget").textContent = validAllowance && months > 0 ? formatNumber(allowance / months) : "—";
+    if (document.querySelector("#dashMiles")) updateDashboard();
   }
 
   const toggleForm = (form, show) => {
@@ -139,29 +141,38 @@
 
   function openPhotoDb() {
     return new Promise((resolve, reject) => {
-      const request = indexedDB.open(PHOTO_DB, 1);
+      const request = indexedDB.open(PHOTO_DB, 2);
       request.onupgradeneeded = () => {
-        const store = request.result.createObjectStore("photos", { keyPath: "id" });
-        store.createIndex("task", "task");
-        store.createIndex("created", "created");
+        if (!request.result.objectStoreNames.contains("photos")) {
+          const store = request.result.createObjectStore("photos", { keyPath: "id" });
+          store.createIndex("task", "task");
+          store.createIndex("created", "created");
+        }
+        if (!request.result.objectStoreNames.contains("documents")) {
+          const documents = request.result.createObjectStore("documents", { keyPath: "id" });
+          documents.createIndex("created", "created");
+        }
       };
       request.onsuccess = () => resolve(request.result);
       request.onerror = () => reject(request.error);
     });
   }
-  async function photoStore(mode, action) {
-    const db = await openPhotoDb();
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction("photos", mode);
-      const request = action(tx.objectStore("photos"));
+  async function deviceStore(storeName, mode, action) {
+    const dbPromise = openPhotoDb();
+    return dbPromise.then(db => new Promise((resolve, reject) => {
+      const tx = db.transaction(storeName, mode);
+      const request = action(tx.objectStore(storeName));
       request.onsuccess = () => resolve(request.result);
       request.onerror = () => reject(request.error);
       tx.oncomplete = () => db.close();
-    });
+    }));
   }
-  const getPhotos = () => photoStore("readonly", store => store.getAll());
-  const putPhoto = photo => photoStore("readwrite", store => store.put(photo));
-  const removePhoto = id => photoStore("readwrite", store => store.delete(id));
+  const getPhotos = () => deviceStore("photos", "readonly", store => store.getAll());
+  const putPhoto = photo => deviceStore("photos", "readwrite", store => store.put(photo));
+  const removePhoto = id => deviceStore("photos", "readwrite", store => store.delete(id));
+  const getDocuments = () => deviceStore("documents", "readonly", store => store.getAll());
+  const putDocument = document => deviceStore("documents", "readwrite", store => store.put(document));
+  const removeDocument = id => deviceStore("documents", "readwrite", store => store.delete(id));
 
   function taskText(taskId) {
     return document.querySelector('[data-task="' + taskId + '"]')?.nextElementSibling?.textContent || "Tesla photo";
@@ -226,6 +237,17 @@
       button.textContent = count ? "+ Photo · " + count : "+ Photo";
       button.classList.toggle("has-items", count > 0);
     });
+    const recent = document.querySelector("#recentPhotoGrid");
+    document.querySelector("#recentPhotoEmpty").hidden = photos.length > 0;
+    recent.innerHTML = "";
+    photos.slice(0, 3).forEach(photo => {
+      const recentUrl = URL.createObjectURL(photo.blob);
+      photoUrls.push(recentUrl);
+      const image = document.createElement("img");
+      image.src = recentUrl;
+      image.alt = taskText(photo.task);
+      recent.append(image);
+    });
     const gallery = document.querySelector("#photoGallery");
     gallery.innerHTML = "";
     photos.forEach(photo => {
@@ -247,6 +269,98 @@
   installPhotoButtons();
   renderPhotos();
 
+
+  let documentUrls = [];
+  document.querySelector("#scanDocument").addEventListener("click", () => document.querySelector("#documentInput").click());
+  document.querySelector("#documentInput").addEventListener("change", async event => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const type = document.querySelector("#documentType").value;
+    const label = document.querySelector("#documentLabel").value.trim();
+    try {
+      await putDocument({
+        id: crypto.randomUUID?.() || String(Date.now()),
+        type,
+        label,
+        name: file.name || "tesla-document.jpg",
+        mime: file.type || "image/jpeg",
+        created: new Date().toISOString(),
+        blob: file
+      });
+      document.querySelector("#documentLabel").value = "";
+      await renderDocuments();
+      document.querySelector("#paperwork").scrollIntoView({ behavior: "smooth", block: "start" });
+    } catch {
+      alert("This scan could not be saved. Try downloading the photo directly to your phone.");
+    } finally {
+      event.target.value = "";
+    }
+  });
+  async function renderDocuments() {
+    documentUrls.forEach(URL.revokeObjectURL);
+    documentUrls = [];
+    let documents = [];
+    try { documents = await getDocuments(); } catch { return; }
+    documents.sort((a, b) => b.created.localeCompare(a.created));
+    document.querySelector("#documentCount").textContent = documents.length + (documents.length === 1 ? " scan" : " scans");
+    document.querySelector("#documentEmpty").hidden = documents.length > 0;
+    const gallery = document.querySelector("#documentGallery");
+    gallery.innerHTML = "";
+    documents.forEach(documentItem => {
+      const url = URL.createObjectURL(documentItem.blob);
+      documentUrls.push(url);
+      const card = document.createElement("article");
+      card.className = "document-card";
+      card.innerHTML = '<img alt="' + esc(documentItem.type) + '"><div><strong>' + esc(documentItem.type) + '</strong><small>' + esc(documentItem.label || "Document scan") + ' · ' + esc(new Date(documentItem.created).toLocaleDateString()) + '</small></div><div class="document-actions"><a download="' + esc(documentItem.name) + '">Download</a><button type="button">Remove</button></div>';
+      card.querySelector("img").src = url;
+      card.querySelector("a").href = url;
+      card.querySelector("button").addEventListener("click", async () => {
+        if (!confirm("Remove this document scan from this device?")) return;
+        await removeDocument(documentItem.id);
+        renderDocuments();
+      });
+      gallery.append(card);
+    });
+  }
+
+  function updateDashboard() {
+    const done = tasks.filter(box => box.checked).length;
+    const percent = tasks.length ? Math.round(done / tasks.length * 100) : 0;
+    document.querySelector("#todayLabel").textContent = new Date().toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+    document.querySelector("#dashProgress").textContent = percent + "%";
+    document.querySelector("#dashProgressCopy").textContent = done + " of " + tasks.length + " complete";
+    document.querySelector("#dashMiles").textContent = document.querySelector("#milesRemaining").textContent;
+
+    const sectionIds = ["delivery", "mileage", "care", "return"];
+    const sectionLabels = { delivery:"Delivery day", mileage:"On the road", care:"Care & records", return:"Lease return" };
+    const sectionCopy = {
+      delivery:"Document the car before the first drive.",
+      mileage:"Stay ahead of your mileage allowance.",
+      care:"Keep service, damage and receipt records together.",
+      return:"Prepare the Tesla and protect your final handoff."
+    };
+    const returnDate = state.fields["lease-end-date"] ? new Date(state.fields["lease-end-date"] + "T12:00:00") : null;
+    const daysToReturn = returnDate ? Math.ceil((returnDate - new Date()) / 86400000) : null;
+    let active = "delivery";
+    const deliveryTasks = tasks.filter(box => box.closest("#delivery"));
+    if (deliveryTasks.length && deliveryTasks.every(box => box.checked)) active = "mileage";
+    if (done > tasks.length * .35) active = "care";
+    if (daysToReturn !== null && daysToReturn <= 180) active = "return";
+
+    document.querySelector("#activeMilestone").textContent = sectionLabels[active];
+    document.querySelector("#activeMilestoneCopy").textContent = sectionCopy[active];
+    document.querySelector("#activeMilestoneLink").href = "#" + active;
+    sectionIds.forEach((id, index) => {
+      const card = document.querySelector('[data-milestone-card="' + id + '"]');
+      const boxes = tasks.filter(box => box.closest("#" + id));
+      const complete = boxes.length && boxes.every(box => box.checked);
+      card.classList.toggle("is-active", id === active);
+      card.classList.toggle("is-complete", complete);
+      document.querySelector('[data-milestone-status="' + id + '"]').textContent = complete ? "Complete" : id === active ? "Active" : index < sectionIds.indexOf(active) ? "In progress" : "Upcoming";
+    });
+  }
+  renderDocuments();
+
   document.querySelector("#exportData").addEventListener("click", () => {
     const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
     const link = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: "tesla-lease-tracker-backup.json" });
@@ -263,4 +377,5 @@
   updateMileageSummary();
   renderMileage();
   renderNotes();
+  updateDashboard();
 })();
