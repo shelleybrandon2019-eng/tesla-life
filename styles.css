@@ -632,3 +632,118 @@ body {
 .milestone::after {
   box-shadow: 0 0 0 5px #f0f4f1, 0 0 0 7px rgba(57,232,124,.18);
 }
+
+
+/* Tesla-style top-down charging car */
+.charging-car-visual {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.car-charge-label {
+  color: #eafff1;
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: .03em;
+}
+.car-charge-label span {
+  color: #39e87c;
+  filter: drop-shadow(0 0 6px rgba(57,232,124,.75));
+}
+.charge-car {
+  position: relative;
+  width: 188px;
+  height: 92px;
+  margin: 0 auto;
+  border: 1px solid rgba(224,255,235,.42);
+  border-radius: 48% 48% 38% 38% / 32% 32% 42% 42%;
+  background: linear-gradient(90deg, rgba(218,230,222,.36), rgba(246,255,249,.75) 48%, rgba(184,202,190,.4));
+  box-shadow: inset 0 0 28px rgba(255,255,255,.22), 0 12px 25px rgba(0,0,0,.25);
+}
+.charge-car::before, .charge-car::after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  width: 11px;
+  border-radius: 50%;
+  background: rgba(225,239,230,.42);
+}
+.charge-car::before { left: -5px; }
+.charge-car::after { right: -5px; }
+.car-pack {
+  position: absolute;
+  left: 48px;
+  right: 48px;
+  top: 20px;
+  bottom: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(7,20,13,.8);
+  border-radius: 9px;
+  background: #101a14;
+  box-shadow: 0 0 0 2px rgba(255,255,255,.28);
+}
+.car-pack-fill {
+  position: absolute;
+  inset: 0;
+  width: 18%;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px),
+    linear-gradient(90deg, #14813f, #39e87c);
+  background-size: 13px 100%, auto;
+  box-shadow: 6px 0 18px rgba(57,232,124,.6);
+  animation: carBatteryFill 3.2s ease-in-out infinite;
+}
+.car-pack b {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  height: 100%;
+  color: rgba(255,255,255,.92);
+  font-size: .43rem;
+  letter-spacing: .12em;
+}
+.car-glass {
+  position: absolute;
+  top: 25px;
+  width: 25px;
+  height: 42px;
+  border-radius: 8px;
+  background: rgba(17,28,21,.72);
+}
+.car-glass--front { left: 17px; clip-path: polygon(25% 0, 100% 12%, 100% 88%, 25% 100%, 0 75%, 0 25%); }
+.car-glass--rear { right: 17px; clip-path: polygon(0 12%, 75% 0, 100% 25%, 100% 75%, 75% 100%, 0 88%); }
+.wheel {
+  position: absolute;
+  z-index: 2;
+  width: 10px;
+  height: 27px;
+  border-radius: 5px;
+  background: #070b08;
+  box-shadow: inset 0 0 0 2px #303a33;
+}
+.wheel--fl { left: 18px; top: -5px; }
+.wheel--fr { left: 18px; bottom: -5px; }
+.wheel--rl { right: 18px; top: -5px; }
+.wheel--rr { right: 18px; bottom: -5px; }
+.car-charge-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 8px;
+  color: white;
+}
+.car-charge-footer strong { font-size: .7rem; }
+.car-charge-footer span { color: #87b99a; font-size: .59rem; }
+@keyframes carBatteryFill {
+  0% { width: 18%; }
+  72%, 100% { width: 100%; }
+}
+@media (max-width: 760px) {
+  .charging-car-visual { padding: 2px 8px; }
+  .charge-car { width: 205px; height: 92px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .car-pack-fill { animation: none; width: 78%; }
+}
