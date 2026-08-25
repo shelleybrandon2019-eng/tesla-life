@@ -169,6 +169,7 @@
 
   const PHOTO_DB = "tesla-lease-photos-v1";
   const photoTaskIds = new Set([
+    "delivery-paint","delivery-panels","delivery-glass","delivery-lights",
     "delivery-four-sides","delivery-body","delivery-wheel-photos","delivery-tire-photos",
     "delivery-odometer","interior-photos","cargo-photos","folder-identity",
     "folder-wheel-tire","folder-defects","week-photograph","care-wheel-photo",
@@ -221,6 +222,7 @@
       const box = document.querySelector('[data-task="' + taskId + '"]');
       if (!box) return;
       const row = box.closest("label");
+      if (!row) return;
       row.classList.add("has-photo");
       const button = document.createElement("button");
       button.type = "button";
@@ -237,6 +239,34 @@
       row.append(button);
     });
   }
+  const inspectionTaskIds = ["delivery-paint", "delivery-panels", "delivery-glass", "delivery-lights"];
+  function renderInspectionAnswers() {
+    inspectionTaskIds.forEach(taskId => {
+      const answer = state.fields["inspection-" + taskId] || "";
+      const row = document.querySelector('[data-inspection-task="' + taskId + '"]');
+      if (!row) return;
+      row.dataset.answer = answer;
+      row.querySelector("[data-inspection-no]")?.classList.toggle("is-selected", answer === "no");
+      row.querySelector("[data-inspection-yes]")?.classList.toggle("is-selected", answer === "yes");
+    });
+  }
+  function answerInspection(taskId, answer) {
+    state.fields["inspection-" + taskId] = answer;
+    state.tasks[taskId] = true;
+    const box = document.querySelector('[data-task="' + taskId + '"]');
+    if (box) box.checked = true;
+    save();
+    renderInspectionAnswers();
+    updateProgress();
+    if (answer === "yes") {
+      activePhotoTask = taskId;
+      document.querySelector("#photoInput").click();
+    }
+  }
+  document.querySelectorAll("[data-inspection-no]").forEach(button => button.addEventListener("click", () => answerInspection(button.dataset.inspectionNo, "no")));
+  document.querySelectorAll("[data-inspection-yes]").forEach(button => button.addEventListener("click", () => answerInspection(button.dataset.inspectionYes, "yes")));
+  renderInspectionAnswers();
+
   document.querySelector("#photoInput").addEventListener("change", async event => {
     const file = event.target.files?.[0];
     if (!file || !activePhotoTask) return;
@@ -275,6 +305,10 @@
       const count = counts[button.dataset.photoTask] || 0;
       button.textContent = count ? "+ Photo · " + count : "+ Photo";
       button.classList.toggle("has-items", count > 0);
+    });
+    document.querySelectorAll("[data-inspection-yes]").forEach(button => {
+      const count = counts[button.dataset.inspectionYes] || 0;
+      button.textContent = count ? "Yes · " + count + (count === 1 ? " photo" : " photos") : "Yes — take photos";
     });
     const recent = document.querySelector("#recentPhotoGrid");
     document.querySelector("#recentPhotoEmpty").hidden = photos.length > 0;
