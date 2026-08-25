@@ -211,3 +211,26 @@ footer { color: var(--muted); text-align: center; padding: 24px 16px calc(32px +
   .gate-panel { grid-template-columns: auto 1fr; }
   .gate-panel .button { grid-column: 1 / -1; width: 100%; }
 }
+
+
+/* Hidden milestones stay completely out of sight until they are available. */
+[hidden] { display: none !important; }
+
+.early-return-control {
+  margin-top: 1rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: #f7f7f5;
+}
+.early-return-control div { display: grid; gap: .25rem; }
+.early-return-control span { color: var(--muted); font-size: .9rem; line-height: 1.4; }
+.early-return-control--active { background: #eef7ef; border-color: #bdd8c1; }
+@media (max-width: 680px) {
+  .early-return-control { align-items: stretch; flex-direction: column; }
+  .early-return-control .button { width: 100%; min-height: 52px; }
+}
