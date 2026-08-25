@@ -23,7 +23,7 @@
     return new Date(value + "T12:00:00").toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
   };
 
-  const tasks = [...document.querySelectorAll("[data-task]")];
+  const tasks = [...document.querySelectorAll("[data-task]")].filter(box => !box.closest("#mileage[hidden]"));
   tasks.forEach(box => {
     box.checked = Boolean(state.tasks[box.dataset.task]);
     box.addEventListener("change", () => {
