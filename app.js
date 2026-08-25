@@ -29,7 +29,10 @@
     box.addEventListener("change", () => {
       state.tasks[box.dataset.task] = box.checked;
       save();
-    
+      updateProgress();
+    });
+  });
+
   document.querySelector("#incidentUnlock").addEventListener("click", () => {
     state.fields["return-override"] = "true";
     save();
@@ -48,9 +51,6 @@
     if (document.activeElement instanceof HTMLInputElement || document.activeElement instanceof HTMLTextAreaElement) document.activeElement.blur();
   });
 
-  updateProgress();
-    });
-  });
   function updateProgress() {
     const done = tasks.filter(box => box.checked).length;
     const percent = tasks.length ? Math.round(done / tasks.length * 100) : 0;
@@ -386,24 +386,25 @@
     const returnOverride = state.fields["return-override"] === "true";
     const returnUnlocked = returnOverride || (daysToReturn !== null && daysToReturn <= 90);
 
-    document.querySelector("#care").classList.toggle("is-locked", !deliveryComplete);
-    document.querySelector("#return").classList.toggle("is-locked", !returnUnlocked);
+    const careSection = document.querySelector("#care");
+    const returnSection = document.querySelector("#return");
+    careSection.hidden = !deliveryComplete;
+    careSection.setAttribute("aria-hidden", String(!deliveryComplete));
+    returnSection.hidden = !returnUnlocked;
+    returnSection.setAttribute("aria-hidden", String(!returnUnlocked));
+
     document.querySelectorAll('[data-gated-link="care"]').forEach(link => {
-      link.classList.toggle("is-locked", !deliveryComplete);
-      link.classList.toggle("is-unlocked", deliveryComplete);
+      link.hidden = !deliveryComplete;
     });
     document.querySelectorAll('[data-gated-link="return"]').forEach(link => {
-      link.classList.toggle("is-locked", !returnUnlocked);
-      link.classList.toggle("is-unlocked", returnUnlocked);
+      link.hidden = !returnUnlocked;
     });
-    document.querySelector("#returnOverrideNote").hidden = !returnOverride || !returnUnlocked;
-    const returnCopy = document.querySelector("#returnGateCopy");
-    if (returnCopy) {
-      returnCopy.textContent = daysToReturn === null
-        ? "Add your lease-end date above. Return tools unlock automatically 90 days before that date."
-        : daysToReturn > 90
-          ? daysToReturn + " days remain. Return tools unlock automatically at 90 days."
-          : "You are within 90 days of lease end. Return tools are available.";
+
+    document.querySelector("#earlyReturnControl").hidden = returnUnlocked;
+    document.querySelector("#returnOverrideNote").hidden = !returnOverride;
+
+    if ((!deliveryComplete && location.hash === "#care") || (!returnUnlocked && location.hash === "#return")) {
+      history.replaceState(null, "", location.pathname + location.search);
     }
 
     let active = "delivery";
@@ -416,11 +417,9 @@
       const card = document.querySelector('[data-milestone-card="' + id + '"]');
       const boxes = tasks.filter(box => box.closest("#" + id));
       const complete = boxes.length > 0 && boxes.every(box => box.checked);
-      const locked = (id === "care" && !deliveryComplete) || (id === "return" && !returnUnlocked);
       card.classList.toggle("is-active", id === active);
       card.classList.toggle("is-complete", complete);
-      card.classList.toggle("is-locked", locked);
-      document.querySelector('[data-milestone-status="' + id + '"]').textContent = locked ? "Locked" : complete ? "Complete" : id === active ? "Active" : "Upcoming";
+      document.querySelector('[data-milestone-status="' + id + '"]').textContent = complete ? "Complete" : id === active ? "Active" : "Upcoming";
     });
   }
   renderDocuments();
