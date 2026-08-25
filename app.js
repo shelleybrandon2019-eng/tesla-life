@@ -125,6 +125,128 @@
     }));
   }
 
+
+  const PHOTO_DB = "tesla-lease-photos-v1";
+  const photoTaskIds = new Set([
+    "delivery-four-sides","delivery-body","delivery-wheel-photos","delivery-tire-photos",
+    "delivery-odometer","interior-photos","cargo-photos","folder-identity",
+    "folder-wheel-tire","folder-defects","week-photograph","care-wheel-photo",
+    "return-photo-again","final-four-sides","final-wheels","final-glass",
+    "final-interior","final-odo-battery","final-location"
+  ]);
+  let activePhotoTask = null;
+  let photoUrls = [];
+
+  function openPhotoDb() {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.open(PHOTO_DB, 1);
+      request.onupgradeneeded = () => {
+        const store = request.result.createObjectStore("photos", { keyPath: "id" });
+        store.createIndex("task", "task");
+        store.createIndex("created", "created");
+      };
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  }
+  async function photoStore(mode, action) {
+    const db = await openPhotoDb();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction("photos", mode);
+      const request = action(tx.objectStore("photos"));
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+      tx.oncomplete = () => db.close();
+    });
+  }
+  const getPhotos = () => photoStore("readonly", store => store.getAll());
+  const putPhoto = photo => photoStore("readwrite", store => store.put(photo));
+  const removePhoto = id => photoStore("readwrite", store => store.delete(id));
+
+  function taskText(taskId) {
+    return document.querySelector('[data-task="' + taskId + '"]')?.nextElementSibling?.textContent || "Tesla photo";
+  }
+  function installPhotoButtons() {
+    photoTaskIds.forEach(taskId => {
+      const box = document.querySelector('[data-task="' + taskId + '"]');
+      if (!box) return;
+      const row = box.closest("label");
+      row.classList.add("has-photo");
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "photo-add";
+      button.dataset.photoTask = taskId;
+      button.textContent = "+ Photo";
+      button.setAttribute("aria-label", "Add photo for " + taskText(taskId));
+      button.addEventListener("click", event => {
+        event.preventDefault();
+        event.stopPropagation();
+        activePhotoTask = taskId;
+        document.querySelector("#photoInput").click();
+      });
+      row.append(button);
+    });
+  }
+  document.querySelector("#photoInput").addEventListener("change", async event => {
+    const file = event.target.files?.[0];
+    if (!file || !activePhotoTask) return;
+    try {
+      await putPhoto({
+        id: crypto.randomUUID?.() || String(Date.now()),
+        task: activePhotoTask,
+        name: file.name || "tesla-photo.jpg",
+        type: file.type || "image/jpeg",
+        created: new Date().toISOString(),
+        blob: file
+      });
+      document.querySelector('[data-task="' + activePhotoTask + '"]').checked = true;
+      state.tasks[activePhotoTask] = true;
+      save();
+      updateProgress();
+      await renderPhotos();
+      document.querySelector("#photos").scrollIntoView({ behavior: "smooth", block: "start" });
+    } catch {
+      alert("This photo could not be saved. Try downloading it directly to your phone instead.");
+    } finally {
+      event.target.value = "";
+      activePhotoTask = null;
+    }
+  });
+  async function renderPhotos() {
+    photoUrls.forEach(URL.revokeObjectURL);
+    photoUrls = [];
+    let photos = [];
+    try { photos = await getPhotos(); } catch { return; }
+    photos.sort((a, b) => b.created.localeCompare(a.created));
+    document.querySelector("#photoCount").textContent = photos.length + (photos.length === 1 ? " photo" : " photos");
+    document.querySelector("#photoEmpty").hidden = photos.length > 0;
+    const counts = photos.reduce((all, photo) => ((all[photo.task] = (all[photo.task] || 0) + 1), all), {});
+    document.querySelectorAll("[data-photo-task]").forEach(button => {
+      const count = counts[button.dataset.photoTask] || 0;
+      button.textContent = count ? "+ Photo · " + count : "+ Photo";
+      button.classList.toggle("has-items", count > 0);
+    });
+    const gallery = document.querySelector("#photoGallery");
+    gallery.innerHTML = "";
+    photos.forEach(photo => {
+      const url = URL.createObjectURL(photo.blob);
+      photoUrls.push(url);
+      const card = document.createElement("article");
+      card.className = "photo-card";
+      card.innerHTML = '<img alt="' + esc(taskText(photo.task)) + '"><div class="photo-card__body"><div class="photo-card__task">' + esc(taskText(photo.task)) + '</div><div class="photo-card__date">' + esc(new Date(photo.created).toLocaleString()) + '</div><div class="photo-card__actions"><a download="' + esc(photo.name) + '">Download</a><button type="button">Remove</button></div></div>';
+      card.querySelector("img").src = url;
+      card.querySelector("a").href = url;
+      card.querySelector("button").addEventListener("click", async () => {
+        if (!confirm("Remove this photo from this device?")) return;
+        await removePhoto(photo.id);
+        renderPhotos();
+      });
+      gallery.append(card);
+    });
+  }
+  installPhotoButtons();
+  renderPhotos();
+
   document.querySelector("#exportData").addEventListener("click", () => {
     const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
     const link = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: "tesla-lease-tracker-backup.json" });
@@ -132,7 +254,7 @@
     setTimeout(() => URL.revokeObjectURL(link.href), 1000);
   });
   document.querySelector("#resetData").addEventListener("click", () => {
-    if (!confirm("Reset every checkbox, lease detail, mileage check-in and note on this device?")) return;
+    if (!confirm("Reset every checkbox, lease detail, mileage check-in and note? Photos will stay in the Photo Vault unless removed there.")) return;
     localStorage.removeItem(KEY);
     location.reload();
   });
