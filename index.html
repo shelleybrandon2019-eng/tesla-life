@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#111318">
+  <meta name="description" content="A private, device-saved Tesla Model Y lease checklist from delivery through return.">
+  <title>Tesla Lease Tracker</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero__inner">
+      <p class="eyebrow">MODEL Y · LEASE COMPANION</p>
+      <h1>Take care of the car.<br><span>Keep every receipt.</span></h1>
+      <p class="hero__copy">A calm, practical record from delivery day to final handoff. Your progress and notes stay saved on this device.</p>
+      <div class="progress-card" aria-live="polite">
+        <div class="progress-card__top"><strong id="progressPercent">0%</strong><span id="progressLabel">0 of 0 complete</span></div>
+        <div class="progress-track"><span id="progressBar"></span></div>
+      </div>
+      <nav class="quick-nav" aria-label="Checklist sections">
+        <a href="#delivery">Delivery</a><a href="#mileage">Mileage</a><a href="#care">Care & records</a><a href="#return">Return</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="setup card" aria-labelledby="details-heading">
+      <div class="section-heading">
+        <div><p class="kicker">START HERE</p><h2 id="details-heading">Your lease at a glance</h2></div>
+        <span class="save-status" id="saveStatus">Saved locally</span>
+      </div>
+      <div class="field-grid">
+        <label>Delivery date<input type="date" data-save="delivery-date"></label>
+        <label>Lease-end date<input type="date" data-save="lease-end-date"></label>
+        <label>Lease term (months)<input type="number" min="1" inputmode="numeric" placeholder="36" data-save="lease-months"></label>
+        <label>Total mileage allowance<input type="number" min="0" inputmode="numeric" placeholder="30,000" data-save="mileage-allowance"></label>
+        <label>Starting odometer<input type="number" min="0" inputmode="numeric" placeholder="15" data-save="starting-odometer"></label>
+        <label>Current odometer<input type="number" min="0" inputmode="numeric" placeholder="8,450" data-save="current-odometer"></label>
+      </div>
+      <div class="mileage-summary" id="mileageSummary">
+        <div><span>Miles used</span><strong id="milesUsed">—</strong></div>
+        <div><span>Miles remaining</span><strong id="milesRemaining">—</strong></div>
+        <div><span>Target / month</span><strong id="monthlyTarget">—</strong></div>
+      </div>
+    </section>
+
+    <section id="delivery" class="phase">
+      <div class="phase-title"><div><p class="kicker">PHASE 01</p><h2>Delivery day</h2></div><p>Do this before you drive away. Photos are your proof.</p></div>
+
+      <article class="checklist card">
+        <h3>Exterior & glass</h3>
+        <div class="check-grid">
+          <label><input type="checkbox" data-task="delivery-walkaround"><span>Walk completely around the car before leaving</span></label>
+          <label><input type="checkbox" data-task="delivery-four-sides"><span>Photograph all four sides and both bumpers</span></label>
+          <label><input type="checkbox" data-task="delivery-body"><span>Photograph hood, roof, hatch and rocker panels</span></label>
+          <label><input type="checkbox" data-task="delivery-paint"><span>Check paint for scratches, chips, dents or mismatch</span></label>
+          <label><input type="checkbox" data-task="delivery-panels"><span>Check door, hood, headlight and hatch panel gaps</span></label>
+          <label><input type="checkbox" data-task="delivery-glass"><span>Check roof glass, windshield and windows</span></label>
+          <label><input type="checkbox" data-task="delivery-lights"><span>Check lights for cracks or moisture</span></label>
+        </div>
+      </article>
+
+      <article class="checklist card accent-card">
+        <div class="title-row"><h3>20″ Induction wheels & tires</h3><span>Priority</span></div>
+        <p class="callout">These wheels are an easy place to get charged later. Keep close-ups from before the first drive.</p>
+        <div class="check-grid">
+          <label><input type="checkbox" data-task="delivery-wheel-photos"><span>Take a close-up photo of every wheel</span></label>
+          <label><input type="checkbox" data-task="delivery-curb-rash"><span>Check every rim for curb rash</span></label>
+          <label><input type="checkbox" data-task="delivery-tire-photos"><span>Photograph every tire</span></label>
+          <label><input type="checkbox" data-task="delivery-tire-damage"><span>Check tires for cuts, bubbles or damage</span></label>
+          <label><input type="checkbox" data-task="delivery-tire-model"><span>Record tire brand and model</span></label>
+          <label><input type="checkbox" data-task="delivery-odometer"><span>Photograph the delivery odometer</span></label>
+        </div>
+      </article>
+
+      <article class="checklist card">
+        <h3>Interior</h3>
+        <div class="check-grid">
+          <label><input type="checkbox" data-task="interior-photos"><span>Photograph seats, dashboard, console and door panels</span></label>
+          <label><input type="checkbox" data-task="cargo-photos"><span>Photograph headliner, cargo area and rear seatbacks</span></label>
+          <label><input type="checkbox" data-task="seat-condition"><span>Check seats for cuts, stains or damage</span></label>
+          <label><input type="checkbox" data-task="seat-functions"><span>Test seat adjustment and heated seats</span></label>
+          <label><input type="checkbox" data-task="controls"><span>Test steering controls, windows and door buttons</span></label>
+          <label><input type="checkbox" data-task="charging-devices"><span>Test USB-C ports and wireless chargers</span></label>
+          <label><input type="checkbox" data-task="storage-areas"><span>Check glovebox, rear hatch and frunk</span></label>
+        </div>
+      </article>
+
+      <article class="checklist card">
+        <h3>Tesla systems</h3>
+        <div class="check-grid">
+          <label><input type="checkbox" data-task="phone-key"><span>Pair phone as key and set up the Tesla app</span></label>
+          <label><input type="checkbox" data-task="key-cards"><span>Confirm and test both key cards</span></label>
+          <label><input type="checkbox" data-task="vin-match"><span>Confirm the app VIN matches the vehicle</span></label>
+          <label><input type="checkbox" data-task="cameras"><span>Test cameras and backup camera</span></label>
+          <label><input type="checkbox" data-task="media"><span>Test navigation, Bluetooth, speakers and microphone</span></label>
+          <label><input type="checkbox" data-task="climate"><span>Test climate control</span></label>
+          <label><input type="checkbox" data-task="driver-assist"><span>Confirm Autosteer / TACC availability</span></label>
+          <label><input type="checkbox" data-task="acceleration"><span>Confirm Acceleration Boost on vehicle/account</span></label>
+          <label><input type="checkbox" data-task="charge-port"><span>Test charge port and confirm normal charging</span></label>
+        </div>
+      </article>
+
+      <article class="checklist card">
+        <h3>Save the evidence</h3>
+        <p class="card-copy">Create a “Tesla Delivery” folder and keep it until the lease is fully settled.</p>
+        <div class="check-grid">
+          <label><input type="checkbox" data-task="folder-paperwork"><span>Delivery paperwork and lease agreement</span></label>
+          <label><input type="checkbox" data-task="folder-identity"><span>Odometer and VIN photos</span></label>
+          <label><input type="checkbox" data-task="folder-wheel-tire"><span>Four wheel and four tire close-ups</span></label>
+          <label><input type="checkbox" data-task="folder-videos"><span>Full exterior and interior videos</span></label>
+          <label><input type="checkbox" data-task="folder-defects"><span>Photos of every delivery defect</span></label>
+          <label><input type="checkbox" data-task="folder-service"><span>Service-request screenshots and work orders</span></label>
+        </div>
+      </article>
+
+      <article class="checklist card">
+        <h3>First week</h3>
+        <div class="check-grid">
+          <label><input type="checkbox" data-task="week-photograph"><span>Photograph anything that appears delivery-related</span></label>
+          <label><input type="checkbox" data-task="week-submit"><span>Submit it through Tesla Service in the app</span></label>
+          <label><input type="checkbox" data-task="week-save"><span>Save screenshots and the invoice/work order—even if $0</span></label>
+        </div>
+      </article>
+    </section>
+
+    <section id="mileage" class="phase">
+      <div class="phase-title"><div><p class="kicker">PHASE 02</p><h2>Mileage checks</h2></div><p>Catch an overage trend early, not six weeks before return.</p></div>
+      <article class="card">
+        <div class="section-heading compact"><h3>Check-in log</h3><button class="button button--dark" type="button" id="addMileage">+ Add check-in</button></div>
+        <form id="mileageForm" class="inline-form" hidden>
+          <label>Date<input type="date" id="mileageDate" required></label>
+          <label>Odometer<input type="number" id="mileageOdometer" min="0" inputmode="numeric" required></label>
+          <button class="button" type="submit">Save</button>
+          <button class="button button--ghost" type="button" id="cancelMileage">Cancel</button>
+        </form>
+        <div id="mileageEmpty" class="empty-state">No mileage check-ins yet.</div>
+        <div id="mileageList" class="record-list"></div>
+      </article>
+      <article class="checklist card">
+        <h3>Ongoing mileage habits</h3>
+        <div class="check-grid">
+          <label><input type="checkbox" data-task="mileage-allowance-recorded"><span>Record total allowance, term and starting odometer above</span></label>
+          <label><input type="checkbox" data-task="mileage-monthly"><span>Check mileage every month or two</span></label>
+          <label><input type="checkbox" data-task="mileage-six"><span>Review pace at 6 months</span></label>
+          <label><input type="checkbox" data-task="mileage-twelve"><span>Review pace at 12 months</span></label>
+          <label><input type="checkbox" data-task="mileage-eighteen"><span>Review pace at 18 months</span></label>
+          <label><input type="checkbox" data-task="mileage-twentyfour"><span>Review pace at 24 months</span></label>
+          <label><input type="checkbox" data-task="mileage-thirty"><span>Review pace at 30 months</span></label>
+        </div>
+      </article>
+    </section>
+
+    <section id="care" class="phase">
+      <div class="phase-title"><div><p class="kicker">PHASE 03</p><h2>Care & records</h2></div><p>Small habits now make the return much easier.</p></div>
+      <div class="two-column">
+        <article class="checklist card">
+          <h3>Wheels & tires</h3>
+          <div class="check-grid">
+            <label><input type="checkbox" data-task="care-tread"><span>Watch tread depth</span></label>
+            <label><input type="checkbox" data-task="care-pressure"><span>Maintain proper tire pressure</span></label>
+            <label><input type="checkbox" data-task="care-alignment"><span>Check alignment if wear is uneven</span></label>
+            <label><input type="checkbox" data-task="care-wheel-photo"><span>Photograph wheel damage when it happens</span></label>
+            <label><input type="checkbox" data-task="care-curb-repair"><span>Repair curb rash when appropriate</span></label>
+          </div>
+        </article>
+        <article class="checklist card">
+          <h3>Interior</h3>
+          <div class="check-grid">
+            <label><input type="checkbox" data-task="care-spills"><span>Clean spills quickly</span></label>
+            <label><input type="checkbox" data-task="care-seats"><span>Protect seats and cargo area from damage</span></label>
+            <label><input type="checkbox" data-task="care-mods"><span>Avoid permanent modifications</span></label>
+            <label><input type="checkbox" data-task="care-odors"><span>Keep smoke, vape residue and odors out</span></label>
+            <label><input type="checkbox" data-task="care-keys"><span>Keep both key cards</span></label>
+          </div>
+        </article>
+      </div>
+      <article class="card">
+        <div class="section-heading compact">
+          <div><h3>Service & damage notes</h3><p class="card-copy">Add dates, mileage, repairs, receipts and photo reminders.</p></div>
+          <button class="button button--dark" type="button" id="addNote">+ Add note</button>
+        </div>
+        <form id="noteForm" class="note-form" hidden>
+          <div class="field-grid">
+            <label>Date<input type="date" id="noteDate" required></label>
+            <label>Type<select id="noteType"><option>Service</option><option>Damage</option><option>Tire / wheel</option><option>Receipt</option><option>Other</option></select></label>
+            <label>Odometer<input type="number" id="noteOdometer" min="0" inputmode="numeric" placeholder="Optional"></label>
+          </div>
+          <label>What happened?<textarea id="noteText" rows="4" required placeholder="Example: Small curb rash on rear passenger wheel. Photos saved in Tesla folder."></textarea></label>
+          <div class="form-actions"><button class="button" type="submit">Save note</button><button class="button button--ghost" type="button" id="cancelNote">Cancel</button></div>
+        </form>
+        <div id="noteEmpty" class="empty-state">No service or damage notes yet.</div>
+        <div id="noteList" class="record-list"></div>
+      </article>
+      <article class="checklist card">
+        <h3>Keep the paperwork</h3>
+        <div class="check-grid">
+          <label><input type="checkbox" data-task="records-service"><span>Tesla service records</span></label>
+          <label><input type="checkbox" data-task="records-tire"><span>Tire receipts</span></label>
+          <label><input type="checkbox" data-task="records-wheel"><span>Wheel-repair receipts</span></label>
+          <label><input type="checkbox" data-task="records-body"><span>Collision and body-repair paperwork</span></label>
+          <label><input type="checkbox" data-task="records-report"><span>Report significant problems through Tesla</span></label>
+        </div>
+      </article>
+    </section>
+
+    <section id="return" class="phase">
+      <div class="phase-title"><div><p class="kicker">PHASE 04</p><h2>Lease return</h2></div><p>Inspect early, compare against delivery photos, and document the handoff.</p></div>
+      <article class="checklist card">
+        <h3>Six months before</h3>
+        <div class="check-grid">
+          <label><input type="checkbox" data-task="return-six-mileage"><span>Compare mileage with the allowance</span></label>
+          <label><input type="checkbox" data-task="return-six-rules"><span>Read Tesla’s current return requirements</span></label>
+          <label><input type="checkbox" data-task="return-six-tires"><span>Inspect all four tires and wheels</span></label>
+          <label><input type="checkbox" data-task="return-six-glass"><span>Look for windshield chips or cracks</span></label>
+          <label><input type="checkbox" data-task="return-six-body"><span>Look for dents and deep scratches</span></label>
+          <label><input type="checkbox" data-task="return-six-interior"><span>Inspect seats and interior</span></label>
+          <label><input type="checkbox" data-task="return-six-keys"><span>Confirm both key cards are present</span></label>
+          <label><input type="checkbox" data-task="return-six-decide"><span>Compare repair cost with possible turn-in charges</span></label>
+        </div>
+      </article>
+      <article class="checklist card">
+        <h3>60–90 days before</h3>
+        <div class="check-grid">
+          <label><input type="checkbox" data-task="return-inspection"><span>Complete Tesla’s required inspection process</span></label>
+          <label><input type="checkbox" data-task="return-photo-again"><span>Photograph the entire car again</span></label>
+          <label><input type="checkbox" data-task="return-compare"><span>Compare with delivery-day photos</span></label>
+          <label><input type="checkbox" data-task="return-estimates"><span>Get estimates for identified excess wear</span></label>
+          <label><input type="checkbox" data-task="return-projection"><span>Project mileage through the actual return date</span></label>
+          <label><input type="checkbox" data-task="return-tires-again"><span>Recheck tires and wheels</span></label>
+          <label><input type="checkbox" data-task="return-restore"><span>Remove modifications and restore required equipment</span></label>
+        </div>
+      </article>
+      <article class="checklist card">
+        <h3>Return day · clear personal data</h3>
+        <div class="check-grid">
+          <label><input type="checkbox" data-task="return-empty"><span>Empty frunk, glovebox, console, pockets and trunk storage</span></label>
+          <label><input type="checkbox" data-task="return-garage"><span>Remove garage-door information</span></label>
+          <label><input type="checkbox" data-task="return-bluetooth"><span>Remove Bluetooth devices</span></label>
+          <label><input type="checkbox" data-task="return-personal"><span>Remove saved addresses and personal information</span></label>
+          <label><input type="checkbox" data-task="return-usb"><span>Remove USB and storage devices</span></label>
+          <label><input type="checkbox" data-task="return-accessories"><span>Remove your accessories</span></label>
+        </div>
+      </article>
+      <article class="checklist card accent-card">
+        <div class="title-row"><h3>Final photo proof</h3><span>Priority</span></div>
+        <div class="check-grid">
+          <label><input type="checkbox" data-task="final-four-sides"><span>Photograph front, rear and both sides</span></label>
+          <label><input type="checkbox" data-task="final-wheels"><span>Photograph every wheel and tire</span></label>
+          <label><input type="checkbox" data-task="final-glass"><span>Photograph windshield and roof glass</span></label>
+          <label><input type="checkbox" data-task="final-interior"><span>Photograph interior, trunk and frunk</span></label>
+          <label><input type="checkbox" data-task="final-video"><span>Take a slow walk-around video</span></label>
+          <label><input type="checkbox" data-task="final-odo-battery"><span>Photograph final odometer and battery percentage</span></label>
+          <label><input type="checkbox" data-task="final-location"><span>Photograph where and when the car was returned</span></label>
+        </div>
+      </article>
+      <article class="checklist card">
+        <h3>Handover</h3>
+        <div class="check-grid">
+          <label><input type="checkbox" data-task="handover-keys"><span>Return both Tesla key cards</span></label>
+          <label><input type="checkbox" data-task="handover-process"><span>Complete Tesla’s return process</span></label>
+          <label><input type="checkbox" data-task="handover-proof"><span>Get proof Tesla received the vehicle</span></label>
+          <label><input type="checkbox" data-task="handover-confirmation"><span>Save return confirmation and final statement</span></label>
+          <label><input type="checkbox" data-task="handover-settled"><span>Keep all records until the lease is fully settled</span></label>
+        </div>
+      </article>
+    </section>
+
+    <section class="five card">
+      <p class="kicker">THE FIVE NON-NEGOTIABLES</p>
+      <h2>If you do nothing else, do these.</h2>
+      <ol>
+        <li>Photograph every wheel on delivery day.</li>
+        <li>Take a full delivery-day walk-around video.</li>
+        <li>Track mileage throughout the lease.</li>
+        <li>Check tires well before turn-in.</li>
+        <li>Take a complete photo set immediately before return.</li>
+      </ol>
+    </section>
+
+    <section class="data-tools">
+      <button class="button button--ghost" type="button" id="exportData">Download backup</button>
+      <button class="text-button" type="button" id="resetData">Reset all saved data</button>
+    </section>
+  </main>
+  <footer><p>Tesla Lease Tracker · Saved only in this browser</p></footer>
+</body>
+</html>
