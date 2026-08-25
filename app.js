@@ -55,7 +55,7 @@
     const done = tasks.filter(box => box.checked).length;
     const percent = tasks.length ? Math.round(done / tasks.length * 100) : 0;
     document.querySelector("#progressPercent").textContent = percent + "%";
-    document.querySelector("#progressLabel").textContent = done + " of " + tasks.length + " complete";
+    document.querySelector("#progressLabel").textContent = "Checklist charge · " + done + " of " + tasks.length;
     document.querySelector("#progressBar").style.width = percent + "%";
     if (document.querySelector("#dashProgress")) updateDashboard();
   }
