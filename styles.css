@@ -234,3 +234,173 @@ footer { color: var(--muted); text-align: center; padding: 24px 16px calc(32px +
   .early-return-control { align-items: stretch; flex-direction: column; }
   .early-return-control .button { width: 100%; min-height: 52px; }
 }
+
+
+/* Tesla Life visual refresh */
+:root {
+  --paper: #f3f4f6;
+  --line: #dfe2e7;
+  --shadow: 0 14px 38px rgba(18, 22, 31, .09);
+}
+body {
+  background:
+    radial-gradient(circle at 92% 7%, rgba(232,33,39,.09), transparent 22rem),
+    linear-gradient(180deg, #f7f8fa 0%, #f1f2f4 48%, #eceef1 100%);
+}
+.hero {
+  background:
+    radial-gradient(circle at 82% 20%, rgba(232,33,39,.3), transparent 14rem),
+    linear-gradient(145deg, #0c0e12 0%, #171b23 58%, #242934 100%);
+  border-bottom: 3px solid var(--red);
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  width: 520px;
+  height: 140px;
+  right: -110px;
+  bottom: 30px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.07), transparent);
+  transform: rotate(-12deg);
+}
+.hero h1 span {
+  background: linear-gradient(90deg, #ffffff, #8f96a3);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.progress-card {
+  background: linear-gradient(135deg, rgba(35,39,48,.95), rgba(21,24,30,.95));
+  border-color: rgba(255,255,255,.13);
+  box-shadow: 0 18px 45px rgba(0,0,0,.28);
+}
+.progress-track span {
+  background: linear-gradient(90deg, #e82127, #ff686d);
+  box-shadow: 0 0 16px rgba(232,33,39,.65);
+}
+.quick-nav a {
+  background: rgba(255,255,255,.07);
+  border-color: rgba(255,255,255,.18);
+  backdrop-filter: blur(8px);
+}
+.quick-nav a:first-child {
+  background: var(--red);
+  border-color: var(--red);
+  box-shadow: 0 8px 20px rgba(232,33,39,.25);
+}
+.dashboard-primary {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(145deg, #171a20, #292e38);
+  box-shadow: 0 18px 38px rgba(17,19,24,.18);
+}
+.dashboard-primary::after {
+  content: "";
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  right: -62px;
+  bottom: -72px;
+  border: 28px solid rgba(232,33,39,.28);
+  border-radius: 50%;
+}
+.dashboard-primary > * { position: relative; z-index: 1; }
+.dashboard-stat {
+  background: linear-gradient(145deg, #fff, #f4f5f7);
+  box-shadow: 0 10px 28px rgba(18,22,31,.07);
+  border-top: 3px solid var(--red);
+}
+.dashboard-stat strong { color: var(--red); }
+.milestone-strip a {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(145deg, #ffffff, #f5f6f8);
+  box-shadow: 0 7px 18px rgba(18,22,31,.06);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.milestone-strip a::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 3px;
+  background: #c7cbd2;
+}
+.milestone-strip a.is-active {
+  border-color: var(--red);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(232,33,39,.14);
+}
+.milestone-strip a.is-active::after { background: var(--red); }
+.milestone-strip a.is-complete::after { background: var(--green); }
+.card, .recent-photos {
+  background: rgba(255,255,255,.94);
+  border-color: rgba(205,209,216,.9);
+  box-shadow: 0 14px 36px rgba(18,22,31,.075);
+}
+.setup {
+  border-top: 4px solid var(--red);
+  background:
+    linear-gradient(135deg, rgba(232,33,39,.035), transparent 35%),
+    rgba(255,255,255,.96);
+}
+.phase-title {
+  padding: 4px 2px 5px;
+}
+.phase-title h2 {
+  text-shadow: 0 1px 0 white;
+}
+.milestone::before {
+  width: 3px;
+  background: linear-gradient(var(--red), #cfd3da 28%, #cfd3da);
+}
+.milestone::after {
+  width: 15px;
+  height: 15px;
+  left: -1px;
+  background: var(--red);
+  box-shadow: 0 0 0 5px #f3f4f6, 0 0 0 7px rgba(232,33,39,.16);
+}
+#delivery > article.checklist {
+  border-left: 4px solid #20242c;
+  animation: deliveryReveal .3s ease both;
+}
+#delivery > article.checklist.accent-card { border-left-color: var(--red); }
+#delivery > article.checklist h3::before {
+  content: "CHECKPOINT";
+  display: block;
+  color: var(--red);
+  font-size: .59rem;
+  letter-spacing: .15em;
+  margin-bottom: 5px;
+}
+.check-grid label {
+  border-radius: 10px;
+  padding-left: 8px;
+  padding-right: 8px;
+  transition: background .15s ease;
+}
+.check-grid label:active { background: #f3f4f7; }
+input[type="checkbox"]:checked {
+  background: linear-gradient(145deg, #252a33, #0f1115);
+  box-shadow: 0 4px 10px rgba(18,22,31,.18);
+}
+.button {
+  box-shadow: 0 8px 18px rgba(232,33,39,.18);
+}
+.button--dark { box-shadow: 0 8px 18px rgba(18,22,31,.16); }
+.button--ghost { box-shadow: none; background: rgba(255,255,255,.72); }
+.photo-add {
+  background: #f8f9fa;
+  border-color: #bcc1c9;
+}
+@keyframes deliveryReveal {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (max-width: 680px) {
+  .hero { padding-bottom: 22px; }
+  .dashboard-primary { min-height: 180px; }
+  .dashboard-stat { min-height: 104px; }
+  #delivery > article.checklist { border-left-width: 3px; }
+}
