@@ -184,3 +184,30 @@ footer { color: var(--muted); text-align: center; padding: 24px 16px calc(32px +
   .document-card img { width: 64px; height: 64px; }
   .document-actions { grid-column: 2; display: flex; gap: 14px; }
 }
+
+/* Simplified milestone gates and larger touch navigation */
+.quick-nav { gap: 11px; padding-bottom: 12px; }
+.quick-nav a { min-height: 50px; display: inline-flex; align-items: center; gap: 7px; padding: 13px 18px; font-size: .94rem; font-weight: 800; }
+.nav-lock { border: 1px solid #555a65; color: #b9bdc5; border-radius: 999px; padding: 2px 6px; font-size: .56rem; letter-spacing: .05em; text-transform: uppercase; }
+.quick-nav a.is-unlocked .nav-lock { display: none; }
+.dashboard-grid { grid-template-columns: 2fr 1fr; }
+.milestone-strip { grid-template-columns: repeat(3, 1fr); }
+[data-gated-link].is-locked { opacity: .62; }
+.gate-panel { background: #eceae4; border: 1px dashed #b9b5ac; border-radius: 18px; padding: 18px; display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center; margin: 0 0 16px; }
+.gate-panel h3 { margin: 0 0 3px; }
+.gate-panel p { margin: 0; color: var(--muted); font-size: .84rem; }
+.gate-icon { background: var(--ink); color: white; border-radius: 10px; padding: 8px; font-size: .6rem; font-weight: 900; letter-spacing: .09em; }
+.phase.is-locked > :not(.gate-panel) { display: none !important; }
+.phase:not(.is-locked) > .gate-panel { display: none; }
+.gate-unlocked-note { background: #eef8f2; color: var(--green); border: 1px solid #b7d9c5; border-radius: 14px; padding: 11px 13px; margin-bottom: 12px; display: flex; justify-content: space-between; gap: 10px; align-items: center; font-size: .78rem; font-weight: 800; }
+.gate-unlocked-note[hidden] { display: none; }
+.gate-unlocked-note button { border: 0; background: transparent; color: var(--green); text-decoration: underline; font-weight: 800; cursor: pointer; }
+.photo-card__actions, .document-actions { flex-wrap: wrap; }
+.drive-share { color: #2459a8 !important; }
+@media (max-width: 680px) {
+  .quick-nav a { min-height: 54px; padding: 14px 19px; font-size: 1rem; }
+  .dashboard-grid { grid-template-columns: 1fr; }
+  .dashboard-primary { grid-column: auto; }
+  .gate-panel { grid-template-columns: auto 1fr; }
+  .gate-panel .button { grid-column: 1 / -1; width: 100%; }
+}
