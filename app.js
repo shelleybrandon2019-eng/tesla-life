@@ -79,7 +79,7 @@
     document.querySelector("#milesUsed").textContent = validOdometer ? formatNumber(current - start) : "—";
     document.querySelector("#milesRemaining").textContent = validAllowance && validOdometer ? formatNumber(Math.max(0, allowance - (current - start))) : "—";
     document.querySelector("#monthlyTarget").textContent = validAllowance && months > 0 ? formatNumber(allowance / months) : "—";
-    if (document.querySelector("#dashMiles")) updateDashboard();
+    if (document.querySelector("#dashProgress")) updateDashboard();
   }
 
   const toggleForm = (form, show) => {
