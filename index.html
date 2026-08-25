@@ -15,17 +15,6 @@
       <p class="eyebrow">MODEL Y · LEASE COMPANION</p>
       <h1>Take care of the car.<br><span>Keep every receipt.</span></h1>
       <p class="hero__copy">A calm, practical record from delivery day to final handoff. Your progress and notes stay saved on this device.</p>
-      <div class="charging-visual charging-car-visual" aria-hidden="true">
-        <div class="car-charge-label"><span>⚡</span> Charging</div>
-        <div class="charge-car">
-          <i class="wheel wheel--fl"></i><i class="wheel wheel--fr"></i>
-          <i class="wheel wheel--rl"></i><i class="wheel wheel--rr"></i>
-          <div class="car-glass car-glass--front"></div>
-          <div class="car-pack"><div class="car-pack-fill"></div><b>ENERGY FLOW</b></div>
-          <div class="car-glass car-glass--rear"></div>
-        </div>
-        <div class="car-charge-footer"><strong>Battery charging</strong><span>Ready for the road</span></div>
-      </div>
       <div class="progress-card" aria-live="polite">
         <div class="progress-card__top"><strong id="progressPercent">0%</strong><span id="progressLabel">0 of 0 complete</span></div>
         <div class="progress-track"><span id="progressBar"></span></div>
@@ -43,14 +32,31 @@
         <span class="dashboard__date" id="todayLabel"></span>
       </div>
       <div class="dashboard-grid">
-        <article class="dashboard-primary">
-          <span class="dashboard-label">ACTIVE MILESTONE</span>
-          <h3 id="activeMilestone">Delivery day</h3>
-          <p id="activeMilestoneCopy">Document the car before the first drive.</p>
-          <a id="activeMilestoneLink" href="#delivery">Continue checklist →</a>
+        <article class="dashboard-primary tesla-screen-scene">
+          <div class="screen-scene-label"><span>MODEL Y</span><small>Delivery mode</small></div>
+          <div class="screen-vehicle" aria-hidden="true">
+            <div class="vehicle-shadow"></div>
+            <div class="vehicle-cabin"></div>
+            <div class="vehicle-body"></div>
+            <i class="vehicle-wheel vehicle-wheel--front"></i>
+            <i class="vehicle-wheel vehicle-wheel--rear"></i>
+          </div>
+          <div class="screen-supercharger" aria-hidden="true"><b>TESLA</b><span></span></div>
+          <div class="screen-cable" aria-hidden="true"></div>
+          <div class="screen-active-copy">
+            <span class="dashboard-label">ACTIVE MILESTONE</span>
+            <h3 id="activeMilestone">Delivery day</h3>
+            <p id="activeMilestoneCopy">Document the car before the first drive.</p>
+            <a id="activeMilestoneLink" href="#delivery">Continue checklist →</a>
+          </div>
         </article>
-        <article class="dashboard-stat"><span>Charge level</span><strong id="dashProgress">0%</strong><small id="dashProgressCopy">Getting started</small></article>
-        
+        <article class="dashboard-stat tesla-charge-panel">
+          <span>Checklist charge</span>
+          <strong id="dashProgress">0%</strong>
+          <div class="dash-battery" aria-hidden="true"><i id="dashChargeFill"></i></div>
+          <small id="dashProgressCopy">Getting started</small>
+          <div class="tesla-screen-readouts"><b>0 mi</b><b>Ready</b><b>Saved</b></div>
+        </article>
       </div>
       <div class="milestone-strip" aria-label="Lease milestones">
         <a href="#delivery" data-milestone-card="delivery"><span>01</span><strong>Delivery</strong><small data-milestone-status="delivery">Active</small></a>
