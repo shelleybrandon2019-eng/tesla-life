@@ -380,6 +380,14 @@
       return:"Prepare the Tesla and protect your final handoff."
     };
     const deliveryTasks = tasks.filter(box => box.closest("#delivery"));
+    const deliveryCards = [...document.querySelectorAll("#delivery > article.checklist")];
+    let previousDeliveryStepsComplete = true;
+    deliveryCards.forEach(card => {
+      card.hidden = !previousDeliveryStepsComplete;
+      const cardTasks = tasks.filter(box => card.contains(box));
+      const cardComplete = cardTasks.length > 0 && cardTasks.every(box => box.checked);
+      previousDeliveryStepsComplete = previousDeliveryStepsComplete && cardComplete;
+    });
     const deliveryComplete = deliveryTasks.length > 0 && deliveryTasks.every(box => box.checked);
     const returnDate = state.fields["lease-end-date"] ? new Date(state.fields["lease-end-date"] + "T12:00:00") : null;
     const daysToReturn = returnDate ? Math.ceil((returnDate - new Date()) / 86400000) : null;
