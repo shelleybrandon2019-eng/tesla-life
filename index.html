@@ -34,7 +34,7 @@
       <div class="dashboard-grid">
         <article class="dashboard-primary tesla-screen-scene">
           <div class="screen-scene-label"><span>MODEL Y</span><small>Delivery mode</small></div>
-          <img class="dashboard-car-render" src="assets/tesla-dashboard-blue.png" alt="Blue Model Y connected to a charger">
+          <img class="dashboard-car-render" src="assets/tesla-dashboard-blue-fast.jpg" alt="Blue Model Y connected to a charger">
           <div class="screen-active-copy">
             <span class="dashboard-label">ACTIVE MILESTONE</span>
             <h3 id="activeMilestone">Delivery day</h3>
@@ -100,10 +100,26 @@
           <label><input type="checkbox" data-task="delivery-walkaround"><span>Walk completely around the car before leaving</span></label>
           <label><input type="checkbox" data-task="delivery-four-sides"><span>Photograph all four sides and both bumpers</span></label>
           <label><input type="checkbox" data-task="delivery-body"><span>Photograph hood, roof, hatch and rocker panels</span></label>
-          <label><input type="checkbox" data-task="delivery-paint"><span>Check paint for scratches, chips, dents or mismatch</span></label>
-          <label><input type="checkbox" data-task="delivery-panels"><span>Check door, hood, headlight and hatch panel gaps</span></label>
-          <label><input type="checkbox" data-task="delivery-glass"><span>Check roof glass, windshield and windows</span></label>
-          <label><input type="checkbox" data-task="delivery-lights"><span>Check lights for cracks or moisture</span></label>
+          <div class="inspection-question" data-inspection-task="delivery-paint">
+            <input type="checkbox" data-task="delivery-paint" hidden>
+            <div class="inspection-copy"><strong>Paint and body</strong><span>Did you find any scratches, chips, dents, or paint mismatch?</span></div>
+            <div class="inspection-actions"><button type="button" data-inspection-no="delivery-paint">No problem</button><button type="button" data-inspection-yes="delivery-paint">Yes — take photos</button></div>
+          </div>
+          <div class="inspection-question" data-inspection-task="delivery-panels">
+            <input type="checkbox" data-task="delivery-panels" hidden>
+            <div class="inspection-copy"><strong>Doors and panel alignment</strong><span>Did you find a door, hood, headlight, or hatch gap that looks uneven?</span></div>
+            <div class="inspection-actions"><button type="button" data-inspection-no="delivery-panels">No problem</button><button type="button" data-inspection-yes="delivery-panels">Yes — take photos</button></div>
+          </div>
+          <div class="inspection-question" data-inspection-task="delivery-glass">
+            <input type="checkbox" data-task="delivery-glass" hidden>
+            <div class="inspection-copy"><strong>Glass and windows</strong><span>Did you find a chip, crack, scratch, seal problem, or window issue?</span></div>
+            <div class="inspection-actions"><button type="button" data-inspection-no="delivery-glass">No problem</button><button type="button" data-inspection-yes="delivery-glass">Yes — take photos</button></div>
+          </div>
+          <div class="inspection-question" data-inspection-task="delivery-lights">
+            <input type="checkbox" data-task="delivery-lights" hidden>
+            <div class="inspection-copy"><strong>Lights</strong><span>Did you find a crack, moisture, alignment issue, or light that does not work?</span></div>
+            <div class="inspection-actions"><button type="button" data-inspection-no="delivery-lights">No problem</button><button type="button" data-inspection-yes="delivery-lights">Yes — take photos</button></div>
+          </div>
         </div>
       </article>
 
