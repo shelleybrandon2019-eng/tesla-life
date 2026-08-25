@@ -369,6 +369,8 @@
     const percent = tasks.length ? Math.round(done / tasks.length * 100) : 0;
     document.querySelector("#todayLabel").textContent = new Date().toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
     document.querySelector("#dashProgress").textContent = percent + "%";
+    const dashFill = document.querySelector("#dashChargeFill");
+    if (dashFill) dashFill.style.width = percent + "%";
     document.querySelector("#dashProgressCopy").textContent = done + " of " + tasks.length + " complete";
     if (document.querySelector("#dashMiles")) document.querySelector("#dashMiles").textContent = document.querySelector("#milesRemaining").textContent;
 
