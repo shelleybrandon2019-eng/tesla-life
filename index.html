@@ -20,7 +20,7 @@
         <div class="progress-track"><span id="progressBar"></span></div>
       </div>
       <nav class="quick-nav" aria-label="Checklist sections">
-        <a href="#delivery">Delivery</a><a href="#mileage">Mileage</a><a href="#care">Care & records</a><a href="#return">Return</a><a href="#paperwork">Paperwork</a><a href="#photos">Photos</a>
+        <a href="#delivery">Delivery</a><a href="#care" data-gated-link="care">Care & records <span class="nav-lock" aria-hidden="true">Locked</span></a><a href="#return" data-gated-link="return">Return <span class="nav-lock" aria-hidden="true">Locked</span></a><a href="#paperwork">Paperwork</a><a href="#photos">Photos</a>
       </nav>
     </div>
   </header>
@@ -39,13 +39,13 @@
           <a id="activeMilestoneLink" href="#delivery">Continue checklist →</a>
         </article>
         <article class="dashboard-stat"><span>Checklist</span><strong id="dashProgress">0%</strong><small id="dashProgressCopy">Getting started</small></article>
-        <article class="dashboard-stat"><span>Miles remaining</span><strong id="dashMiles">—</strong><small>Based on your allowance</small></article>
+        
       </div>
       <div class="milestone-strip" aria-label="Lease milestones">
         <a href="#delivery" data-milestone-card="delivery"><span>01</span><strong>Delivery</strong><small data-milestone-status="delivery">Active</small></a>
-        <a href="#mileage" data-milestone-card="mileage"><span>02</span><strong>On the road</strong><small data-milestone-status="mileage">Upcoming</small></a>
-        <a href="#care" data-milestone-card="care"><span>03</span><strong>Care & records</strong><small data-milestone-status="care">Upcoming</small></a>
-        <a href="#return" data-milestone-card="return"><span>04</span><strong>Lease return</strong><small data-milestone-status="return">Upcoming</small></a>
+        
+        <a href="#care" data-milestone-card="care" data-gated-link="care"><span>02</span><strong>Care & records</strong><small data-milestone-status="care">Locked</small></a>
+        <a href="#return" data-milestone-card="return" data-gated-link="return"><span>03</span><strong>Lease return</strong><small data-milestone-status="return">Locked</small></a>
       </div>
       <div class="recent-photos">
         <div class="section-heading compact"><div><h3>Latest photos</h3><p class="card-copy">Your three most recent vehicle photos.</p></div><a href="#photos">View photo vault →</a></div>
@@ -154,7 +154,7 @@
       </article>
     </section>
 
-    <section id="mileage" class="phase milestone milestone--mileage">
+    <section id="mileage" class="phase milestone milestone--mileage" hidden aria-hidden="true">
       <div class="phase-title"><div><p class="kicker">PHASE 02</p><h2>Mileage checks</h2></div><p>Catch an overage trend early, not six weeks before return.</p></div>
       <article class="card">
         <div class="section-heading compact"><h3>Check-in log</h3><button class="button button--dark" type="button" id="addMileage">+ Add check-in</button></div>
@@ -181,7 +181,12 @@
       </article>
     </section>
 
-    <section id="care" class="phase milestone milestone--care">
+    <section id="care" class="phase milestone milestone--care is-locked">
+      <div class="gate-panel" id="careGate">
+        <span class="gate-icon" aria-hidden="true">LOCKED</span>
+        <div><h3>Finish Delivery first</h3><p>Care & Records unlocks automatically when every Delivery checklist item is complete.</p></div>
+        <a class="button button--dark" href="#delivery">Go to Delivery</a>
+      </div>
       <div class="phase-title"><div><p class="kicker">PHASE 03</p><h2>Care & records</h2></div><p>Small habits now make the return much easier.</p></div>
       <div class="two-column">
         <article class="checklist card">
@@ -234,7 +239,16 @@
       </article>
     </section>
 
-    <section id="return" class="phase milestone milestone--return">
+    <section id="return" class="phase milestone milestone--return is-locked">
+      <div class="gate-panel" id="returnGate">
+        <span class="gate-icon" aria-hidden="true">LOCKED</span>
+        <div><h3>Return opens at 90 days</h3><p id="returnGateCopy">Add your lease-end date above. Return tools unlock automatically 90 days before that date.</p></div>
+        <button class="button button--ghost" type="button" id="incidentUnlock">Something happened — unlock now</button>
+      </div>
+      <div class="gate-unlocked-note" id="returnOverrideNote" hidden>
+        <span>Return tools manually unlocked for an incident.</span>
+        <button type="button" id="relockReturn">Lock again</button>
+      </div>
       <div class="phase-title"><div><p class="kicker">PHASE 04</p><h2>Lease return</h2></div><p>Inspect early, compare against delivery photos, and document the handoff.</p></div>
       <article class="checklist card">
         <h3>Six months before</h3>
