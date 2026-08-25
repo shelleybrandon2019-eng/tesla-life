@@ -29,7 +29,26 @@
     box.addEventListener("change", () => {
       state.tasks[box.dataset.task] = box.checked;
       save();
-      updateProgress();
+    
+  document.querySelector("#incidentUnlock").addEventListener("click", () => {
+    state.fields["return-override"] = "true";
+    save();
+    updateDashboard();
+    document.querySelector("#return").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+  document.querySelector("#relockReturn").addEventListener("click", () => {
+    delete state.fields["return-override"];
+    save();
+    updateDashboard();
+  });
+  document.querySelectorAll(".quick-nav a, .milestone-strip a").forEach(link => link.addEventListener("click", () => {
+    if (document.activeElement instanceof HTMLElement) document.activeElement.blur();
+  }));
+  window.addEventListener("pageshow", () => {
+    if (document.activeElement instanceof HTMLInputElement || document.activeElement instanceof HTMLTextAreaElement) document.activeElement.blur();
+  });
+
+  updateProgress();
     });
   });
   function updateProgress() {
@@ -65,7 +84,7 @@
 
   const toggleForm = (form, show) => {
     form.hidden = !show;
-    if (show) form.querySelector("input, textarea, select")?.focus();
+    if (!show && document.activeElement instanceof HTMLElement) document.activeElement.blur();
   };
 
   const mileageForm = document.querySelector("#mileageForm");
@@ -83,6 +102,7 @@
     document.querySelector('[data-save="current-odometer"]').value = state.fields["current-odometer"];
     mileageForm.reset();
     toggleForm(mileageForm, false);
+    document.activeElement?.blur();
     save(); renderMileage(); updateMileageSummary();
   });
   function renderMileage() {
@@ -112,6 +132,7 @@
     });
     noteForm.reset();
     toggleForm(noteForm, false);
+    document.activeElement?.blur();
     save(); renderNotes();
   });
   function renderNotes() {
@@ -127,6 +148,24 @@
     }));
   }
 
+
+
+  async function shareFile(blob, name, title) {
+    const file = new File([blob], name, { type: blob.type || "image/jpeg" });
+    if (navigator.share && (!navigator.canShare || navigator.canShare({ files: [file] }))) {
+      try {
+        await navigator.share({ title, text: "Tesla Life backup", files: [file] });
+        return;
+      } catch (error) {
+        if (error?.name === "AbortError") return;
+      }
+    }
+    const url = URL.createObjectURL(blob);
+    const link = Object.assign(document.createElement("a"), { href: url, download: name });
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    alert("The file was downloaded. Open it and choose Share → Google Drive.");
+  }
 
   const PHOTO_DB = "tesla-lease-photos-v1";
   const photoTaskIds = new Set([
@@ -255,10 +294,11 @@
       photoUrls.push(url);
       const card = document.createElement("article");
       card.className = "photo-card";
-      card.innerHTML = '<img alt="' + esc(taskText(photo.task)) + '"><div class="photo-card__body"><div class="photo-card__task">' + esc(taskText(photo.task)) + '</div><div class="photo-card__date">' + esc(new Date(photo.created).toLocaleString()) + '</div><div class="photo-card__actions"><a download="' + esc(photo.name) + '">Download</a><button type="button">Remove</button></div></div>';
+      card.innerHTML = '<img alt="' + esc(taskText(photo.task)) + '"><div class="photo-card__body"><div class="photo-card__task">' + esc(taskText(photo.task)) + '</div><div class="photo-card__date">' + esc(new Date(photo.created).toLocaleString()) + '</div><div class="photo-card__actions"><a download="' + esc(photo.name) + '">Download</a><button class="drive-share" type="button">Save / Share</button><button class="remove-photo" type="button">Remove</button></div></div>';
       card.querySelector("img").src = url;
       card.querySelector("a").href = url;
-      card.querySelector("button").addEventListener("click", async () => {
+      card.querySelector(".drive-share").addEventListener("click", () => shareFile(photo.blob, photo.name, taskText(photo.task)));
+      card.querySelector(".remove-photo").addEventListener("click", async () => {
         if (!confirm("Remove this photo from this device?")) return;
         await removePhoto(photo.id);
         renderPhotos();
@@ -311,10 +351,11 @@
       documentUrls.push(url);
       const card = document.createElement("article");
       card.className = "document-card";
-      card.innerHTML = '<img alt="' + esc(documentItem.type) + '"><div><strong>' + esc(documentItem.type) + '</strong><small>' + esc(documentItem.label || "Document scan") + ' · ' + esc(new Date(documentItem.created).toLocaleDateString()) + '</small></div><div class="document-actions"><a download="' + esc(documentItem.name) + '">Download</a><button type="button">Remove</button></div>';
+      card.innerHTML = '<img alt="' + esc(documentItem.type) + '"><div><strong>' + esc(documentItem.type) + '</strong><small>' + esc(documentItem.label || "Document scan") + ' · ' + esc(new Date(documentItem.created).toLocaleDateString()) + '</small></div><div class="document-actions"><a download="' + esc(documentItem.name) + '">Download</a><button class="drive-share" type="button">Save / Share</button><button class="remove-document" type="button">Remove</button></div>';
       card.querySelector("img").src = url;
       card.querySelector("a").href = url;
-      card.querySelector("button").addEventListener("click", async () => {
+      card.querySelector(".drive-share").addEventListener("click", () => shareFile(documentItem.blob, documentItem.name, documentItem.type));
+      card.querySelector(".remove-document").addEventListener("click", async () => {
         if (!confirm("Remove this document scan from this device?")) return;
         await removeDocument(documentItem.id);
         renderDocuments();
@@ -329,34 +370,57 @@
     document.querySelector("#todayLabel").textContent = new Date().toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
     document.querySelector("#dashProgress").textContent = percent + "%";
     document.querySelector("#dashProgressCopy").textContent = done + " of " + tasks.length + " complete";
-    document.querySelector("#dashMiles").textContent = document.querySelector("#milesRemaining").textContent;
+    if (document.querySelector("#dashMiles")) document.querySelector("#dashMiles").textContent = document.querySelector("#milesRemaining").textContent;
 
-    const sectionIds = ["delivery", "mileage", "care", "return"];
-    const sectionLabels = { delivery:"Delivery day", mileage:"On the road", care:"Care & records", return:"Lease return" };
+    const sectionIds = ["delivery", "care", "return"];
+    const sectionLabels = { delivery:"Delivery day", care:"Care & records", return:"Lease return" };
     const sectionCopy = {
       delivery:"Document the car before the first drive.",
-      mileage:"Stay ahead of your mileage allowance.",
       care:"Keep service, damage and receipt records together.",
       return:"Prepare the Tesla and protect your final handoff."
     };
+    const deliveryTasks = tasks.filter(box => box.closest("#delivery"));
+    const deliveryComplete = deliveryTasks.length > 0 && deliveryTasks.every(box => box.checked);
     const returnDate = state.fields["lease-end-date"] ? new Date(state.fields["lease-end-date"] + "T12:00:00") : null;
     const daysToReturn = returnDate ? Math.ceil((returnDate - new Date()) / 86400000) : null;
-    let active = "delivery";
-    const deliveryTasks = tasks.filter(box => box.closest("#delivery"));
-    if (deliveryTasks.length && deliveryTasks.every(box => box.checked)) active = "mileage";
-    if (done > tasks.length * .35) active = "care";
-    if (daysToReturn !== null && daysToReturn <= 180) active = "return";
+    const returnOverride = state.fields["return-override"] === "true";
+    const returnUnlocked = returnOverride || (daysToReturn !== null && daysToReturn <= 90);
 
+    document.querySelector("#care").classList.toggle("is-locked", !deliveryComplete);
+    document.querySelector("#return").classList.toggle("is-locked", !returnUnlocked);
+    document.querySelectorAll('[data-gated-link="care"]').forEach(link => {
+      link.classList.toggle("is-locked", !deliveryComplete);
+      link.classList.toggle("is-unlocked", deliveryComplete);
+    });
+    document.querySelectorAll('[data-gated-link="return"]').forEach(link => {
+      link.classList.toggle("is-locked", !returnUnlocked);
+      link.classList.toggle("is-unlocked", returnUnlocked);
+    });
+    document.querySelector("#returnOverrideNote").hidden = !returnOverride || !returnUnlocked;
+    const returnCopy = document.querySelector("#returnGateCopy");
+    if (returnCopy) {
+      returnCopy.textContent = daysToReturn === null
+        ? "Add your lease-end date above. Return tools unlock automatically 90 days before that date."
+        : daysToReturn > 90
+          ? daysToReturn + " days remain. Return tools unlock automatically at 90 days."
+          : "You are within 90 days of lease end. Return tools are available.";
+    }
+
+    let active = "delivery";
+    if (deliveryComplete) active = "care";
+    if (returnUnlocked) active = "return";
     document.querySelector("#activeMilestone").textContent = sectionLabels[active];
     document.querySelector("#activeMilestoneCopy").textContent = sectionCopy[active];
     document.querySelector("#activeMilestoneLink").href = "#" + active;
-    sectionIds.forEach((id, index) => {
+    sectionIds.forEach(id => {
       const card = document.querySelector('[data-milestone-card="' + id + '"]');
       const boxes = tasks.filter(box => box.closest("#" + id));
-      const complete = boxes.length && boxes.every(box => box.checked);
+      const complete = boxes.length > 0 && boxes.every(box => box.checked);
+      const locked = (id === "care" && !deliveryComplete) || (id === "return" && !returnUnlocked);
       card.classList.toggle("is-active", id === active);
       card.classList.toggle("is-complete", complete);
-      document.querySelector('[data-milestone-status="' + id + '"]').textContent = complete ? "Complete" : id === active ? "Active" : index < sectionIds.indexOf(active) ? "In progress" : "Upcoming";
+      card.classList.toggle("is-locked", locked);
+      document.querySelector('[data-milestone-status="' + id + '"]').textContent = locked ? "Locked" : complete ? "Complete" : id === active ? "Active" : "Upcoming";
     });
   }
   renderDocuments();
