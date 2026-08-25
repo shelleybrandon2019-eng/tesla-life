@@ -1261,3 +1261,47 @@ body {
     height: 205px;
   }
 }
+
+
+/* Yes/no damage inspections */
+.inspection-question {
+  display: grid;
+  gap: 12px;
+  padding: 15px 8px;
+  border-top: 1px solid #e7e9ec;
+}
+.inspection-copy { display: grid; gap: 3px; }
+.inspection-copy strong { color: #171d24; font-size: .94rem; }
+.inspection-copy span { color: #5f6d79; font-size: .82rem; font-weight: 500; }
+.inspection-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.inspection-actions button {
+  min-height: 48px;
+  border: 1px solid #b8c2cc;
+  border-radius: 12px;
+  background: #f8fafc;
+  color: #26333f;
+  font-weight: 800;
+  cursor: pointer;
+}
+.inspection-actions button[data-inspection-yes] {
+  border-color: #8bbbe4;
+  color: #126db9;
+}
+.inspection-actions button.is-selected {
+  color: white;
+  border-color: #176bb5;
+  background: #176bb5;
+  box-shadow: 0 7px 16px rgba(23,107,181,.2);
+}
+.inspection-question[data-answer="no"] {
+  border-left: 3px solid #2d8b57;
+  padding-left: 12px;
+}
+.inspection-question[data-answer="yes"] {
+  border-left: 3px solid #3b9cff;
+  padding-left: 12px;
+  background: #f2f8fe;
+}
+@media (max-width: 390px) {
+  .inspection-actions { grid-template-columns: 1fr; }
+}
