@@ -912,3 +912,315 @@ body {
   .milestone-strip { margin: 0 8px 8px; }
   .recent-photos { margin: 0 8px 8px; }
 }
+
+
+/* Closer Tesla center-screen layout */
+:root { --red: #3b9cff; --green: #3b9cff; }
+.charging-visual { display: none !important; }
+.hero {
+  background: linear-gradient(145deg, #08111b 0%, #10263a 56%, #173b5a 100%);
+  border-bottom-color: #3b9cff;
+}
+.dashboard {
+  padding: 8px;
+  border: 9px solid #11151b;
+  border-radius: 30px;
+  background: #e9eef4;
+  box-shadow: 0 26px 60px rgba(6,16,27,.28), inset 0 0 0 1px #3c444e;
+}
+.dashboard__heading {
+  min-height: 48px;
+  padding: 8px 14px;
+  color: #171d24;
+  background: #f1f3f6;
+  border-radius: 16px 16px 0 0;
+  border-bottom: 1px solid #cfd5dc;
+}
+.dashboard__heading .kicker { color: #447497; }
+.dashboard-grid {
+  grid-template-columns: minmax(0, 2.25fr) minmax(175px, .75fr);
+  min-height: 350px;
+  gap: 1px;
+  padding: 0;
+  background: #cdd3da;
+}
+.tesla-screen-scene {
+  position: relative;
+  min-height: 350px;
+  border-radius: 0;
+  padding: 0;
+  overflow: hidden;
+  color: #161c23;
+  background:
+    radial-gradient(ellipse at 48% 66%, rgba(255,255,255,.95), transparent 34%),
+    linear-gradient(180deg, #eef2f6, #dbe2e9);
+  box-shadow: none;
+  border: 0;
+}
+.tesla-screen-scene::before, .tesla-screen-scene::after { content: none; }
+.screen-scene-label {
+  position: absolute;
+  left: 18px;
+  top: 15px;
+  display: grid;
+  z-index: 4;
+}
+.screen-scene-label span { font-size: .7rem; font-weight: 850; letter-spacing: .14em; }
+.screen-scene-label small { color: #66727e; font-size: .64rem; }
+.screen-vehicle {
+  position: absolute;
+  left: 8%;
+  right: 21%;
+  top: 72px;
+  height: 170px;
+}
+.vehicle-shadow {
+  position: absolute;
+  left: 7%;
+  right: 4%;
+  bottom: 14px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(15,25,36,.25);
+  filter: blur(10px);
+}
+.vehicle-body {
+  position: absolute;
+  left: 4%;
+  right: 3%;
+  bottom: 30px;
+  height: 70px;
+  border-radius: 58% 40% 25% 30% / 48% 50% 38% 42%;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.35), transparent 30%),
+    linear-gradient(150deg, #1d8ff1 0%, #0e5fa9 58%, #073b6b 100%);
+  box-shadow: inset 0 -12px 18px rgba(3,30,55,.32), 0 12px 20px rgba(18,38,57,.22);
+}
+.vehicle-body::before {
+  content: "";
+  position: absolute;
+  left: 3%;
+  right: 3%;
+  top: 37%;
+  height: 2px;
+  background: rgba(215,240,255,.45);
+}
+.vehicle-body::after {
+  content: "";
+  position: absolute;
+  right: 3%;
+  top: 30%;
+  width: 8%;
+  height: 12%;
+  border-radius: 50%;
+  background: #d8efff;
+  box-shadow: 0 0 9px rgba(210,239,255,.9);
+}
+.vehicle-cabin {
+  position: absolute;
+  left: 28%;
+  right: 20%;
+  bottom: 85px;
+  height: 55px;
+  border-radius: 60% 48% 10% 8% / 78% 78% 12% 12%;
+  background: linear-gradient(145deg, #a8c7dc, #273b4c 62%, #172531);
+  border: 5px solid #126db9;
+  border-bottom: 0;
+  transform: skewX(-7deg);
+}
+.vehicle-cabin::after {
+  content: "";
+  position: absolute;
+  left: 52%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: rgba(210,231,244,.5);
+}
+.vehicle-wheel {
+  position: absolute;
+  z-index: 3;
+  bottom: 15px;
+  width: 48px;
+  height: 48px;
+  border: 6px solid #151a20;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, #20262c 0 19%, transparent 20%),
+    conic-gradient(#b9c1c9 0 8%, #3b4249 9% 17%, #b9c1c9 18% 26%, #3b4249 27% 35%, #b9c1c9 36% 44%, #3b4249 45% 53%, #b9c1c9 54% 62%, #3b4249 63% 71%, #b9c1c9 72% 80%, #3b4249 81% 89%, #b9c1c9 90%);
+  box-shadow: 0 4px 8px rgba(0,0,0,.3);
+}
+.vehicle-wheel--front { left: 16%; }
+.vehicle-wheel--rear { right: 13%; }
+.screen-supercharger {
+  position: absolute;
+  z-index: 3;
+  right: 7%;
+  top: 80px;
+  width: 54px;
+  height: 118px;
+  border-radius: 10px 10px 4px 4px;
+  background: linear-gradient(145deg, #fff, #bdc5ce);
+  box-shadow: 0 10px 20px rgba(19,31,43,.2);
+}
+.screen-supercharger::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 26px;
+  width: 30px;
+  height: 65px;
+  border-radius: 14px 14px 5px 5px;
+  background: #222831;
+  box-shadow: inset 8px 0 #3b9cff;
+}
+.screen-supercharger::after {
+  content: "";
+  position: absolute;
+  left: -7px;
+  right: -7px;
+  bottom: -10px;
+  height: 12px;
+  border-radius: 3px;
+  background: #4d555e;
+}
+.screen-supercharger b {
+  position: absolute;
+  z-index: 2;
+  top: 8px;
+  width: 100%;
+  text-align: center;
+  color: #287fca;
+  font-size: .45rem;
+  letter-spacing: .08em;
+}
+.screen-cable {
+  position: absolute;
+  z-index: 4;
+  right: 17%;
+  top: 133px;
+  width: 66px;
+  height: 70px;
+  border-right: 4px solid #3b9cff;
+  border-bottom: 4px solid #3b9cff;
+  border-radius: 0 0 30px 0;
+  filter: drop-shadow(0 0 5px rgba(59,156,255,.5));
+}
+.screen-active-copy {
+  position: absolute;
+  z-index: 5;
+  left: 18px;
+  right: 18px;
+  bottom: 14px;
+  padding: 12px 14px;
+  border: 1px solid rgba(100,115,130,.18);
+  border-radius: 12px;
+  background: rgba(248,250,252,.86);
+  backdrop-filter: blur(10px);
+}
+.screen-active-copy .dashboard-label { color: #3b78a8; }
+.screen-active-copy h3 { margin: 3px 0 1px; font-size: 1.18rem; }
+.screen-active-copy p { color: #566674; margin: 0 0 5px; font-size: .74rem; }
+.screen-active-copy a { color: #126db9; font-size: .73rem; font-weight: 850; }
+.tesla-charge-panel {
+  min-height: 350px;
+  border-radius: 0;
+  border: 0;
+  border-top: 0;
+  padding: 20px 16px;
+  background: #f5f6f8;
+  box-shadow: none;
+}
+.tesla-charge-panel > span {
+  color: #596774;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  font-size: .62rem;
+}
+.tesla-charge-panel strong {
+  margin: 14px 0 8px;
+  color: #171d24;
+  font-size: 3.3rem;
+}
+.dash-battery {
+  position: relative;
+  width: calc(100% - 8px);
+  height: 22px;
+  margin: 2px 8px 9px 0;
+  padding: 3px;
+  border: 2px solid #26313b;
+  border-radius: 5px;
+}
+.dash-battery::after {
+  content: "";
+  position: absolute;
+  right: -7px;
+  top: 5px;
+  width: 6px;
+  height: 8px;
+  border-radius: 0 2px 2px 0;
+  background: #26313b;
+}
+.dash-battery i {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #176bb5, #5bb3ff);
+  transition: width .3s ease;
+}
+.tesla-screen-readouts {
+  display: grid;
+  gap: 1px;
+  margin-top: auto;
+  border: 1px solid #d5dae0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.tesla-screen-readouts b {
+  padding: 9px;
+  background: white;
+  color: #42505d;
+  font-size: .67rem;
+}
+.milestone-strip {
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 0 0 14px 14px;
+  background: #161b22;
+}
+.milestone-strip a {
+  min-height: 58px;
+  place-content: center;
+  text-align: center;
+  background: transparent;
+  border-color: transparent;
+}
+.milestone-strip a.is-active {
+  background: #29384a;
+  border-color: #3b9cff;
+}
+.recent-photos {
+  margin: 10px 0 0;
+  background: #f8fafc;
+}
+@media (max-width: 680px) {
+  .dashboard { border-width: 6px; border-radius: 22px; }
+  .dashboard__heading h2 { font-size: 1.18rem; }
+  .dashboard-grid { grid-template-columns: 1fr; min-height: auto; }
+  .tesla-screen-scene { min-height: 330px; }
+  .screen-vehicle { left: 1%; right: 12%; top: 70px; transform: scale(.88); transform-origin: left center; }
+  .screen-supercharger { right: 5%; }
+  .screen-cable { right: 14%; }
+  .tesla-charge-panel {
+    min-height: 145px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 6px 14px;
+  }
+  .tesla-charge-panel strong { margin: 0; font-size: 2.5rem; }
+  .tesla-charge-panel small { grid-column: 1 / -1; }
+  .tesla-screen-readouts { grid-column: 1 / -1; grid-template-columns: repeat(3,1fr); }
+  .milestone-strip { display: flex; }
+}
