@@ -20,7 +20,7 @@
         <div class="progress-track"><span id="progressBar"></span></div>
       </div>
       <nav class="quick-nav" aria-label="Checklist sections">
-        <a href="#delivery">Delivery</a><a href="#mileage">Mileage</a><a href="#care">Care & records</a><a href="#return">Return</a>
+        <a href="#delivery">Delivery</a><a href="#mileage">Mileage</a><a href="#care">Care & records</a><a href="#return">Return</a><a href="#photos">Photos</a>
       </nav>
     </div>
   </header>
@@ -266,6 +266,17 @@
           <label><input type="checkbox" data-task="handover-settled"><span>Keep all records until the lease is fully settled</span></label>
         </div>
       </article>
+    </section>
+
+    <section id="photos" class="photo-vault card">
+      <div class="section-heading compact">
+        <div><p class="kicker">PHOTO VAULT</p><h2>Photos saved on this device</h2></div>
+        <span class="photo-count" id="photoCount">0 photos</span>
+      </div>
+      <p class="photo-note">Tap <strong>+ Photo</strong> beside a photo task to open your camera. These stay private in this browser. Download important proof to your Photos app for a second copy.</p>
+      <input id="photoInput" type="file" accept="image/*" capture="environment" hidden>
+      <div id="photoEmpty" class="empty-state">No photos attached yet.</div>
+      <div id="photoGallery" class="photo-gallery"></div>
     </section>
 
     <section class="five card">
