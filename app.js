@@ -178,9 +178,13 @@
   ]);
   let activePhotoTask = null;
   let photoUrls = [];
+  let photoCache = null;
+  let visiblePhotoCount = 24;
+  let photoDbPromise;
 
   function openPhotoDb() {
-    return new Promise((resolve, reject) => {
+    if (photoDbPromise) return photoDbPromise;
+    photoDbPromise = new Promise((resolve, reject) => {
       const request = indexedDB.open(PHOTO_DB, 2);
       request.onupgradeneeded = () => {
         if (!request.result.objectStoreNames.contains("photos")) {
@@ -194,17 +198,19 @@
         }
       };
       request.onsuccess = () => resolve(request.result);
-      request.onerror = () => reject(request.error);
+      request.onerror = () => {
+        photoDbPromise = null;
+        reject(request.error);
+      };
     });
+    return photoDbPromise;
   }
   async function deviceStore(storeName, mode, action) {
-    const dbPromise = openPhotoDb();
-    return dbPromise.then(db => new Promise((resolve, reject) => {
+    return openPhotoDb().then(db => new Promise((resolve, reject) => {
       const tx = db.transaction(storeName, mode);
       const request = action(tx.objectStore(storeName));
       request.onsuccess = () => resolve(request.result);
       request.onerror = () => reject(request.error);
-      tx.oncomplete = () => db.close();
     }));
   }
   const getPhotos = () => deviceStore("photos", "readonly", store => store.getAll());
@@ -213,6 +219,20 @@
   const getDocuments = () => deviceStore("documents", "readonly", store => store.getAll());
   const putDocument = document => deviceStore("documents", "readwrite", store => store.put(document));
   const removeDocument = id => deviceStore("documents", "readwrite", store => store.delete(id));
+
+  async function makePreview(file, maxSize = 640) {
+    if (!file.type?.startsWith("image/")) return file;
+    try {
+      const bitmap = await createImageBitmap(file);
+      const scale = Math.min(1, maxSize / Math.max(bitmap.width, bitmap.height));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+      canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+      canvas.getContext("2d", { alpha: false }).drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+      bitmap.close();
+      return await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", 0.76)) || file;
+    } catch { return file; }
+  }
 
   function taskText(taskId) {
     return document.querySelector('[data-task="' + taskId + '"]')?.nextElementSibling?.textContent || "Tesla photo";
@@ -271,14 +291,17 @@
     const file = event.target.files?.[0];
     if (!file || !activePhotoTask) return;
     try {
-      await putPhoto({
+      const photo = {
         id: crypto.randomUUID?.() || String(Date.now()),
         task: activePhotoTask,
         name: file.name || "tesla-photo.jpg",
         type: file.type || "image/jpeg",
         created: new Date().toISOString(),
-        blob: file
-      });
+        blob: file,
+        preview: await makePreview(file)
+      };
+      await putPhoto(photo);
+      if (photoCache) photoCache.unshift(photo);
       document.querySelector('[data-task="' + activePhotoTask + '"]').checked = true;
       state.tasks[activePhotoTask] = true;
       save();
@@ -295,9 +318,10 @@
   async function renderPhotos() {
     photoUrls.forEach(URL.revokeObjectURL);
     photoUrls = [];
-    let photos = [];
-    try { photos = await getPhotos(); } catch { return; }
-    photos.sort((a, b) => b.created.localeCompare(a.created));
+    try {
+      if (!photoCache) photoCache = await getPhotos();
+    } catch { return; }
+    const photos = photoCache.sort((a, b) => b.created.localeCompare(a.created));
     document.querySelector("#photoCount").textContent = photos.length + (photos.length === 1 ? " photo" : " photos");
     document.querySelector("#photoEmpty").hidden = photos.length > 0;
     const counts = photos.reduce((all, photo) => ((all[photo.task] = (all[photo.task] || 0) + 1), all), {});
@@ -314,7 +338,7 @@
     document.querySelector("#recentPhotoEmpty").hidden = photos.length > 0;
     recent.innerHTML = "";
     photos.slice(0, 3).forEach(photo => {
-      const recentUrl = URL.createObjectURL(photo.blob);
+      const recentUrl = URL.createObjectURL(photo.preview || photo.blob);
       photoUrls.push(recentUrl);
       const image = document.createElement("img");
       image.src = recentUrl;
@@ -323,8 +347,8 @@
     });
     const gallery = document.querySelector("#photoGallery");
     gallery.innerHTML = "";
-    photos.forEach(photo => {
-      const url = URL.createObjectURL(photo.blob);
+    photos.slice(0, visiblePhotoCount).forEach(photo => {
+      const url = URL.createObjectURL(photo.preview || photo.blob);
       photoUrls.push(url);
       const card = document.createElement("article");
       card.className = "photo-card";
@@ -335,10 +359,22 @@
       card.querySelector(".remove-photo").addEventListener("click", async () => {
         if (!confirm("Remove this photo from this device?")) return;
         await removePhoto(photo.id);
+        photoCache = photoCache.filter(item => item.id !== photo.id);
         renderPhotos();
       });
       gallery.append(card);
     });
+    if (photos.length > visiblePhotoCount) {
+      const more = document.createElement("button");
+      more.type = "button";
+      more.className = "button secondary gallery-more";
+      more.textContent = `Show ${Math.min(24, photos.length - visiblePhotoCount)} more photos`;
+      more.addEventListener("click", () => {
+        visiblePhotoCount += 24;
+        renderPhotos();
+      });
+      gallery.append(more);
+    }
   }
   installPhotoButtons();
   renderPhotos();
@@ -486,3 +522,4 @@
   renderNotes();
   updateDashboard();
 })();
+
