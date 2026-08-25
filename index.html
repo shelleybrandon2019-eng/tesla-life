@@ -20,12 +20,40 @@
         <div class="progress-track"><span id="progressBar"></span></div>
       </div>
       <nav class="quick-nav" aria-label="Checklist sections">
-        <a href="#delivery">Delivery</a><a href="#mileage">Mileage</a><a href="#care">Care & records</a><a href="#return">Return</a><a href="#photos">Photos</a>
+        <a href="#delivery">Delivery</a><a href="#mileage">Mileage</a><a href="#care">Care & records</a><a href="#return">Return</a><a href="#paperwork">Paperwork</a><a href="#photos">Photos</a>
       </nav>
     </div>
   </header>
 
   <main>
+    <section class="dashboard" aria-labelledby="dashboard-heading">
+      <div class="dashboard__heading">
+        <div><p class="kicker">YOUR TESLA LIFE</p><h2 id="dashboard-heading">Lease dashboard</h2></div>
+        <span class="dashboard__date" id="todayLabel"></span>
+      </div>
+      <div class="dashboard-grid">
+        <article class="dashboard-primary">
+          <span class="dashboard-label">ACTIVE MILESTONE</span>
+          <h3 id="activeMilestone">Delivery day</h3>
+          <p id="activeMilestoneCopy">Document the car before the first drive.</p>
+          <a id="activeMilestoneLink" href="#delivery">Continue checklist →</a>
+        </article>
+        <article class="dashboard-stat"><span>Checklist</span><strong id="dashProgress">0%</strong><small id="dashProgressCopy">Getting started</small></article>
+        <article class="dashboard-stat"><span>Miles remaining</span><strong id="dashMiles">—</strong><small>Based on your allowance</small></article>
+      </div>
+      <div class="milestone-strip" aria-label="Lease milestones">
+        <a href="#delivery" data-milestone-card="delivery"><span>01</span><strong>Delivery</strong><small data-milestone-status="delivery">Active</small></a>
+        <a href="#mileage" data-milestone-card="mileage"><span>02</span><strong>On the road</strong><small data-milestone-status="mileage">Upcoming</small></a>
+        <a href="#care" data-milestone-card="care"><span>03</span><strong>Care & records</strong><small data-milestone-status="care">Upcoming</small></a>
+        <a href="#return" data-milestone-card="return"><span>04</span><strong>Lease return</strong><small data-milestone-status="return">Upcoming</small></a>
+      </div>
+      <div class="recent-photos">
+        <div class="section-heading compact"><div><h3>Latest photos</h3><p class="card-copy">Your three most recent vehicle photos.</p></div><a href="#photos">View photo vault →</a></div>
+        <div id="recentPhotoEmpty" class="recent-empty">No photos yet. Use a + Photo button to add your first.</div>
+        <div id="recentPhotoGrid" class="recent-photo-grid"></div>
+      </div>
+    </section>
+
     <section class="setup card" aria-labelledby="details-heading">
       <div class="section-heading">
         <div><p class="kicker">START HERE</p><h2 id="details-heading">Your lease at a glance</h2></div>
@@ -46,7 +74,7 @@
       </div>
     </section>
 
-    <section id="delivery" class="phase">
+    <section id="delivery" class="phase milestone milestone--delivery">
       <div class="phase-title"><div><p class="kicker">PHASE 01</p><h2>Delivery day</h2></div><p>Do this before you drive away. Photos are your proof.</p></div>
 
       <article class="checklist card">
@@ -126,7 +154,7 @@
       </article>
     </section>
 
-    <section id="mileage" class="phase">
+    <section id="mileage" class="phase milestone milestone--mileage">
       <div class="phase-title"><div><p class="kicker">PHASE 02</p><h2>Mileage checks</h2></div><p>Catch an overage trend early, not six weeks before return.</p></div>
       <article class="card">
         <div class="section-heading compact"><h3>Check-in log</h3><button class="button button--dark" type="button" id="addMileage">+ Add check-in</button></div>
@@ -153,7 +181,7 @@
       </article>
     </section>
 
-    <section id="care" class="phase">
+    <section id="care" class="phase milestone milestone--care">
       <div class="phase-title"><div><p class="kicker">PHASE 03</p><h2>Care & records</h2></div><p>Small habits now make the return much easier.</p></div>
       <div class="two-column">
         <article class="checklist card">
@@ -206,7 +234,7 @@
       </article>
     </section>
 
-    <section id="return" class="phase">
+    <section id="return" class="phase milestone milestone--return">
       <div class="phase-title"><div><p class="kicker">PHASE 04</p><h2>Lease return</h2></div><p>Inspect early, compare against delivery photos, and document the handoff.</p></div>
       <article class="checklist card">
         <h3>Six months before</h3>
@@ -266,6 +294,22 @@
           <label><input type="checkbox" data-task="handover-settled"><span>Keep all records until the lease is fully settled</span></label>
         </div>
       </article>
+    </section>
+
+    <section id="paperwork" class="paperwork card">
+      <div class="section-heading compact">
+        <div><p class="kicker">PAPERWORK</p><h2>Document scanner</h2></div>
+        <span class="photo-count" id="documentCount">0 scans</span>
+      </div>
+      <p class="photo-note">Photograph one page at a time. Scans stay private on this device; download important documents for a second copy.</p>
+      <div class="scan-controls">
+        <label>Document type<select id="documentType"><option>Lease agreement</option><option>Delivery paperwork</option><option>Service record</option><option>Repair invoice</option><option>Tire / wheel receipt</option><option>Return paperwork</option><option>Other</option></select></label>
+        <label>Label<input id="documentLabel" type="text" placeholder="Example: Page 1 or rear wheel repair"></label>
+        <button class="button button--dark" type="button" id="scanDocument">Camera scan</button>
+        <input id="documentInput" type="file" accept="image/*" capture="environment" hidden>
+      </div>
+      <div id="documentEmpty" class="empty-state">No paperwork scanned yet.</div>
+      <div id="documentGallery" class="document-gallery"></div>
     </section>
 
     <section id="photos" class="photo-vault card">
