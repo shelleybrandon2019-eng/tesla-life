@@ -1224,3 +1224,40 @@ body {
   .tesla-screen-readouts { grid-column: 1 / -1; grid-template-columns: repeat(3,1fr); }
   .milestone-strip { display: flex; }
 }
+
+
+/* Photoreal dashboard vehicle presentation */
+.tesla-screen-scene {
+  background:
+    radial-gradient(ellipse at 48% 55%, rgba(255,255,255,1), rgba(233,239,245,.92) 60%, #dce4eb 100%);
+}
+.dashboard-car-render {
+  position: absolute;
+  z-index: 2;
+  left: 1.5%;
+  top: 38px;
+  width: 94%;
+  height: 220px;
+  object-fit: contain;
+  object-position: center;
+  filter: drop-shadow(0 14px 16px rgba(20,36,52,.2));
+}
+.screen-scene-label { z-index: 5; }
+.screen-active-copy {
+  left: 14px;
+  right: 14px;
+  bottom: 12px;
+  background: rgba(248,250,252,.92);
+}
+.tesla-charge-panel {
+  background: linear-gradient(180deg, #f8f9fb, #edf1f5);
+}
+.tesla-charge-panel strong { color: #166eb6; }
+@media (max-width: 680px) {
+  .dashboard-car-render {
+    left: -2%;
+    top: 42px;
+    width: 104%;
+    height: 205px;
+  }
+}
